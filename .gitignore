@@ -1,0 +1,8 @@
+GPATH
+GPATHS
+GRTAGS
+GTAGS
+GSYMS
+*~
+*.o
+*.log
