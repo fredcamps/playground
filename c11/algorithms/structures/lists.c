@@ -2,97 +2,149 @@
 #include <stdlib.h>
 
 typedef struct linked_node {
-  int value;
-  struct linked_node *next;
-} LinkedNode;
+	int value;
+	struct linked_node *next;
+}   LinkedNode;
 
 typedef struct double_linked_node {
-  int value;
-  struct double_linked_node *next;
-  struct double_linked_node *prev;
+	int value;
+	struct double_linked_node *next;
+	struct double_linked_node *prev;
 } DoubleLinkedNode;
 
 typedef struct list {
-  int size;
-  DoubleLinkedNode *head;
-  DoubleLinkedNode *tail;
-  int (*length)();
-  void (*push)(int item);
-  void (*prepend)(int item);
-  void (*pop)();
-  void (*shift)();
-  DoubleLinkedNode (*find)(int item);
-  void (*destroy)();
+	int size;
+	DoubleLinkedNode *head;
+	DoubleLinkedNode *tail;
+	int (*length)();
+	void (*append)(int item);
+	void (*prepend)(int item);
+	void (*pop)();
+	void (*shift)();
+	void (*print)();
+	void (*sort)();
+	DoubleLinkedNode *(*find)(int item);
+	void (*destroy)();
 } List;
 
-List *new() {
-  List *l = (List *) malloc(sizeof(List));
-  l->head = NULL;
-  l->tail = NULL;
-  l->size = 0;
-  return l;
+List *l;
+
+int list_length() {
+	return l->size;
 }
 
-int list_length(List *list) {
-  return list->size;
+void list_append(int item) {
+	DoubleLinkedNode *node =
+		(DoubleLinkedNode *) malloc(sizeof(DoubleLinkedNode));
+	node->value = item;
+	if (l->tail == NULL) {
+		node->prev = node;
+		node->next = node;
+		l->head = node;
+	} else {
+		node->prev = l->tail;
+		node->next = l->head;
+		node->prev->next = node;
+		node->next->prev = node;
+	}
+	l->tail = node;
+	l->size++;
 }
 
-void list_push(List *l, int item) {
-  DoubleLinkedNode *node =
-    (DoubleLinkedNode *) malloc(sizeof(DoubleLinkedNode));
-
-  node->value = item;
-  node->next = NULL;
-  if(l->tail != NULL) {
-    node->prev = NULL;
-    l->head = node;
-  } else {
-    node->prev = l->tail;
-    l->tail->next = node;
-  }
-  l->tail = node;
-  l->size++;
+void list_pop() {
+	if (l->length() > 1) {
+		l->tail = l->tail->prev;
+		l->tail->next = l->head;
+		l->size--;
+	} else {
+		l->size = 0;
+		free(l->tail);
+		free(l->head);
+	}
 }
 
-void list_pop(List *l) {
-  if (l->tail != NULL && l->tail->prev != NULL) {
-    l->tail->prev->next = NULL;
-    l->tail = l->tail->prev;
-    l->size--;
-  } else {
-    l->size = 0;
-    l->tail = NULL;
-    l->head = NULL;
-  }
+void list_prepend(int item) {
+	DoubleLinkedNode *node =
+		(DoubleLinkedNode *) malloc(sizeof(DoubleLinkedNode));
+
+	/* Next step for implement */
 }
 
-void list_destroy(List  *list) {
-  while (list->length() > 0) {
-    list->pop();
-  }
-  free(list);
+void list_shift() {
+	/* Not implemented yet */
 }
 
-DoubleLinkedNode *find(List *l, int item) {
-  DoubleLinkedNode *current = l->head;
-  while (current->next != NULL) {
-    if (current->value == item) {
-      return current;
-    }
-    current = current->next;
-  }
+void list_destroy() {
+	while (l->length() > 0) {
+		l->pop();
+	}
+	free(l);
+}
 
-  return NULL;
+void list_print() {
+	int len = l->length();
+	DoubleLinkedNode *current = l->head;
+	DoubleLinkedNode *next = l->head->next;
+	for (int i = 0; i < len; i++) {
+		printf(" %d ", current->value);
+		current = next;
+		next = next->next;
+	}
+	printf(".\n");
+}
+
+DoubleLinkedNode *list_find(int item) {
+	int len = l->length();
+	DoubleLinkedNode *current = l->head;
+	DoubleLinkedNode *next = l->head->next;
+	for (int i = 0; i < len; i++) {
+		if (current->value == item) {
+			printf("Found %d ", current->value);
+			return current;
+		}
+		current = next;
+		next = next->next;
+	}
+	return NULL;
+}
+
+void list_sort() {
+	/* Not Implemented Yet.	*/
+}
+
+List *make_list() {
+	l = (List *) malloc(sizeof(List));
+	l->print = list_print;
+	l->append = list_append;
+	l->prepend = list_prepend;
+	l->pop = list_pop;
+	l->destroy = list_destroy;
+	l->length = list_length;
+	l->find = list_find;
+	l->head = NULL;
+	l->tail = NULL;
+	l->size = 0;
+	return l;
 }
 
 int main(int argc, char *argv[])
 {
-  printf("1\n");
-  List *lista = new();
-  DoubleLinkedNode *node;
-  lista->push = list_push;
-  lista->push(lista, 1);
-  lista->push(lista, 2);
-  node = lista->find(1);
-  return 0;
+	List *l1 = make_list();
+	List *l2 = make_list();
+	// 	List *l3 = make_list();
+	l1->append(2);
+	l1->append(1);
+	l1->append(3);
+	l1->append(4);
+	l1->print();
+	l1->find(4);
+    l1->find(1);
+	l2->prepend(1);
+	l2->prepend(2);
+	l2->prepend(3);
+	l2->prepend(4);
+	l2->print();
+	l1->destroy();
+	l2->destroy();
+	return 0;
 }
