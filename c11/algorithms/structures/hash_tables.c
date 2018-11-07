@@ -13,33 +13,44 @@ typedef struct node {
 
 
 typedef struct hash_table {
-    Node *nodes;
-    int size;
+    Node *nodes[SIZE];
     void (*insert)(int key, int value);
     void (*delete)(int key);
     void (*destroy)();
     Node *(*get)(int key);
-    Node *(*search)(int value);
 } HashTable;
 
 HashTable *hash_table;
 
 int hash_code(int key) {
-    return -1;
+    return key % SIZE;
 }
 
 void hash_table_insert(int key, int value) {
+    int hash_index = hash_code(key);
+    Node *node = (Node *) malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
 
-}
-
-Node *hash_table_search(int value) {
-    Node *node;
-    return node;
+    while (hash_table->nodes[hash_index] != NULL &&
+           hash_table->nodes[hash_index]->key != -1) {
+        ++hash_index;
+        hash_index %= SIZE;
+    }
+    hash_table->nodes[hash_index] = node;
 }
 
 Node *hash_table_get(int key) {
-    Node *node;
-    return node;
+    int hash_index = hash_code(key);
+
+
+    while (hash_table->nodes[hash_index] != NULL) {
+        if (hash_table->nodes[hash_index]->key == key) {
+            return hash_table->nodes[hash_index];
+        }
+    }
+
+    return NULL;
 }
 
 void hash_table_delete(int key) {
@@ -52,9 +63,7 @@ void hash_table_destroy() {
 
 HashTable *make_hash_table () {
     hash_table = (HashTable *) malloc(sizeof(HashTable));
-    hash_table->size = SIZE;
     hash_table->insert = hash_table_insert;
-    hash_table->search = hash_table_search;
     hash_table->get = hash_table_get;
     hash_table->delete = hash_table_delete;
     hash_table->destroy = hash_table_destroy;
