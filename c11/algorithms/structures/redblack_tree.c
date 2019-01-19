@@ -12,8 +12,9 @@ typedef struct node {
     struct node *right;
     color color;
     struct node *(*insert)(int data);
-    struct search *(*search)(int data);
-    struct delete *(*delete)(int data);
+    struct node *(*find)(int data);
+    struct node *(*purge)(int data);
+    void (*display)();
 } Node;
 
 Node *root;
@@ -77,6 +78,7 @@ static Node *create_node(int key)
     n->key = key;
     n->right = NULL;
     n->left = NULL;
+    return n;
 }
 
 static Node *transplant(Node * r, Node *x, Node *y)
@@ -182,30 +184,31 @@ static Node *deletion(Node *r, Node *z)
     if (y_original_color == black) {
         deletion_fixup(r, x);
     }
+    return z;
 }
 
 static Node *insertion_fixup(Node *r, Node *z)
 {
     Node *y = NULL;
+    Node *z_grand_parent = z->parent->parent;
     while (z->parent->color == red) {
-        if (z->parent == z->parent->parent->left) {
-            y = z->parent->parent->right;
-            if (y->color == red) {
+        if ((z_grand_parent != NULL) && (z->parent == z_grand_parent->left)) {
+            y = z_grand_parent->right;
+            if (y != NULL && y->color == red) {
                 z->parent->color = black;
                 y->color = black;
                 z->parent->parent->color = red;
                 z = z->parent->parent;
             } else if (z == z->parent->right) {
-                z = z->parent;
                 left_rotate(r, z);
-            } else {
-                z->parent->color = black;
-                z->parent->parent->color = red;
-                right_rotate(r, z->parent->parent);
+                z = z->parent;
             }
+            z->parent->color = black;
+            z->parent->parent->color = red;
+            right_rotate(r, z->parent->parent);
         } else {
-            y = z->parent->parent->left;
-            if (z->color == red) {
+            y = z_grand_parent->left;
+            if (y != NULL && y->color == red) {
                 z->parent->color = black;
                 y->color = black;
                 z->parent->parent->color = red;
@@ -213,12 +216,10 @@ static Node *insertion_fixup(Node *r, Node *z)
             } else if (z == z->parent->left) {
                 z = z->parent;
                 right_rotate(r, z);
-            } else {
-                z->parent->color = black;
-                z->parent->parent->color = red;
-                left_rotate(r, z->parent->parent);
             }
-
+            left_rotate(r, z->parent->parent);
+            z->parent->color = black;
+            z->parent->parent->color = red;
         }
     }
     r->color = black;
@@ -252,17 +253,88 @@ static Node *insertion(Node *r, Node *z)
     return insertion_fixup(r, z);
 }
 
+static Node *search(Node *r, int key)
+{
+    Node *n = r;
+    while (n->key != key) {
+        if (n == NULL) {
+            return n;
+        }
+        if (n->key > key) {
+            n = n->left;
+        } else {
+            n = n->right;
+        }
+    }
+    return n;
+}
+
+
+static void inorder_helper(Node *r)
+{
+    if (r == NULL) {
+        return;
+    }
+    inorder_helper(r->left);
+    printf("%d ", r->key);
+    inorder_helper(r->right);
+}
+
+Node *find(int key)
+{
+    return search(root, key);
+}
+
 Node *insert(int key)
 {
+    Node *n = create_node(key);
+    if (root == NULL) {
+        root = n;
+        return n;
+    }
+    root = insertion(root, n);
+    return root;
 }
 
 Node *purge(int key)
 {
+    Node *n = NULL;
+    Node *to_delete = find(key);
+    n = deletion(root, to_delete);
+    return n;
+}
+
+void display()
+{
+    inorder_helper(root);
+}
+
+
+RedBlackTree *make_redblack_tree()
+{
+    RedBlackTree *t = (RedBlackTree *)  malloc(sizeof(RedBlackTree));
+    t->insert = insert;
+    t->find = find;
+    t->purge = purge;
+    t->display = display;
+    return t;
 }
 
 
 int main(int argc, char *argv[])
 {
+    RedBlackTree *tree = make_redblack_tree();
+    tree->insert(7);
+    tree->insert(6);
+    tree->insert(5);
+    tree->insert(4);
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(1);
 
+    printf("\nPrinting In Order Traversal: ");
+    tree->display();
+
+    free(tree);
     return 0;
 }
