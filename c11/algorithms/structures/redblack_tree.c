@@ -17,9 +17,16 @@ typedef struct node {
     void (*display)();
 } Node;
 
-Node *root;
+static Node *root;
 
 typedef Node RedBlackTree;
+
+static void swap_colors(color *color1, color *color2)
+{
+  color *temp = color1;
+  *color1 = *color2;
+  *color2 = *temp;
+}
 
 static Node *get_smallest_subtree_node(Node *n) {
     Node *current = n;
@@ -29,46 +36,52 @@ static Node *get_smallest_subtree_node(Node *n) {
     return current;
 }
 
-static Node *left_rotate(Node *r, Node *x)
+static Node *left_rotate(Node *r, Node *n)
 {
-    Node *y = x->right;
-    x->right = y->left;
-    if (y->left != NULL) {
-        y->left->parent = x;
-    }
-    y->parent = x->parent;
-    if (x->parent == NULL) {
-        r = y;
-    } else if (x == x->parent->left) {
-        x->parent->left = y;
-    } else {
-        x->parent->right = y;
-    }
-    y->left = x;
-    y->parent = y;
+    Node *right = n->right;
+    n->right = right->left;
 
-    return y;
+    if (n->right != NULL) {
+        n->right->parent = n;
+    }
+    right->parent = n->parent;
+
+    if (n->parent == NULL) {
+        r = right;
+    } else if (n == n->parent->left) {
+        n->parent->left = right;
+    } else {
+        n->parent->right = right;
+    }
+
+    right->left = n;
+    n->parent = right;
+
+    return r;
 }
 
-static Node *right_rotate(Node *r, Node *y)
+static Node *right_rotate(Node *r, Node *n)
 {
-    Node *x = y->left;
-    y->left = x->right;
-    if (x->right != NULL) {
-        x->right->parent = x;
-    }
-    x->parent = y->parent;
-    if (y->parent == NULL) {
-        r = x;
-    } else if (y == y->parent->right) {
-        y->parent->right = x;
-    } else {
-        y->parent->left = x;
-    }
-    x->right = y;
-    x->parent = y;
+    Node *left = n->left;
+    n->left = left->right;
 
-    return x;
+    if (n->left != NULL) {
+        n->left->parent = n;
+    }
+    left->parent = n->parent;
+
+    if (n->parent == NULL) {
+        r = left;
+    } else if (n == n->parent->left) {
+        n->parent->left = left;
+    } else {
+        n->parent->right = left;
+    }
+
+    left->right = n;
+    n->parent = left;
+
+    return r;
 }
 
 static Node *create_node(int key)
@@ -187,70 +200,81 @@ static Node *deletion(Node *r, Node *z)
     return z;
 }
 
-static Node *insertion_fixup(Node *r, Node *z)
+static Node *insertion_fixup(Node *r, Node *n)
 {
-    Node *y = NULL;
-    Node *z_grand_parent = z->parent->parent;
-    while (z->parent->color == red) {
-        if ((z_grand_parent != NULL) && (z->parent == z_grand_parent->left)) {
-            y = z_grand_parent->right;
-            if (y != NULL && y->color == red) {
-                z->parent->color = black;
-                y->color = black;
-                z->parent->parent->color = red;
-                z = z->parent->parent;
-            } else if (z == z->parent->right) {
-                left_rotate(r, z);
-                z = z->parent;
+    Node *parent_node = NULL;
+    Node *grand_parent_node = NULL;
+
+    while ((n != r) &&
+           (n->color != black) &&
+           (n->parent->color == red)) {
+
+        parent_node = n->parent;
+        grand_parent_node = n->parent->parent;
+
+        if (parent_node == grand_parent_node->left) {
+
+            if (grand_parent_node->right != NULL &&
+                grand_parent_node->right->color == red) {
+                grand_parent_node->color = red;
+                parent_node->color = black;
+                grand_parent_node->right->color = black;
+                n = grand_parent_node;
+            } else {
+                if (n == parent_node->right) {
+                    left_rotate(r, parent_node);
+                    n = parent_node;
+                    parent_node = n->parent;
+                }
+
+                right_rotate(r, grand_parent_node);
+                swap_colors(&parent_node->color,
+                            &grand_parent_node->color);
+                n = parent_node;
             }
-            z->parent->color = black;
-            z->parent->parent->color = red;
-            right_rotate(r, z->parent->parent);
         } else {
-            y = z_grand_parent->left;
-            if (y != NULL && y->color == red) {
-                z->parent->color = black;
-                y->color = black;
-                z->parent->parent->color = red;
-                z = z->parent->parent;
-            } else if (z == z->parent->left) {
-                z = z->parent;
-                right_rotate(r, z);
+
+            if ((grand_parent_node->left != NULL) &&
+                (grand_parent_node->left->color = red)) {
+                grand_parent_node->color = red;
+                parent_node->color = black;
+                grand_parent_node->left->color = black;
+                n = grand_parent_node;
+            } else {
+                if (n == parent_node->left) {
+                    right_rotate(r, parent_node);
+                    n = parent_node;
+                    parent_node = n->parent;
+                }
+
+                left_rotate(r, grand_parent_node);
+                swap_colors(&parent_node->color,
+                            &grand_parent_node->color);
             }
-            left_rotate(r, z->parent->parent);
-            z->parent->color = black;
-            z->parent->parent->color = red;
         }
     }
-    r->color = black;
     return r;
 }
 
-static Node *insertion(Node *r, Node *z)
+static Node *insertion(Node *r, int key)
 {
-    Node *y = NULL;
-    Node *x = r;
-    while (x != NULL) {
-        y = x;
-        if (z->key < x->key) {
-            x = x->left;
-        } else {
-            x = x->right;
-        }
+    Node *item = NULL;
+    if (r == NULL) {
+        r = create_node(key);
+        return r;
     }
-    z->parent = y;
-    if (y == NULL) {
-        r = z;
-    } else if (z->key < y->key) {
-        y->left = z;
-    } else {
-        y->right = z;
-    }
-    z->left = NULL;
-    z->right = NULL;
-    z->color = red;
 
-    return insertion_fixup(r, z);
+    if (key < r->key) {
+        r->left = insertion(r->left, key);
+        r->left->parent = r;
+        item = r->left;
+    } else if (key > r->key) {
+        r->right = insertion(r->right, key);
+        r->right->parent = r;
+        item = r->right;
+    }
+
+    return insertion_fixup(r, item);
 }
 
 static Node *search(Node *r, int key)
@@ -287,12 +311,7 @@ Node *find(int key)
 
 Node *insert(int key)
 {
-    Node *n = create_node(key);
-    if (root == NULL) {
-        root = n;
-        return n;
-    }
-    root = insertion(root, n);
+    root = insertion(root, key);
     return root;
 }
 
@@ -331,9 +350,10 @@ int main(int argc, char *argv[])
     tree->insert(3);
     tree->insert(2);
     tree->insert(1);
-
-    printf("\nPrinting In Order Traversal: ");
+    printf("\nPrinting In Order Traversal (Before Delete): ");
     tree->display();
+
+    printf("\n Printing In Order Traversal (After Delete): ");
 
     free(tree);
     return 0;
