@@ -11,9 +11,9 @@ typedef struct node {
     struct node *left;
     struct node *right;
     color color;
-    struct node *(*insert)(int data);
-    struct node *(*find)(int data);
-    struct node *(*purge)(int data);
+    struct node *(*insert)(int key);
+    struct node *(*find)(int key);
+    struct node *(*purge)(int key);
     void (*display)();
 } Node;
 
@@ -23,13 +23,18 @@ typedef Node RedBlackTree;
 
 static void swap_colors(color *color1, color *color2)
 {
-  color *temp = color1;
-  *color1 = *color2;
-  *color2 = *temp;
+    color *temp = color1;
+    *color1 = *color2;
+    *color2 = *temp;
 }
 
 static Node *get_smallest_subtree_node(Node *n) {
     Node *current = n;
+
+    if (current == NULL) {
+        return current;
+    }
+
     while(current->left != NULL) {
         current = current->left;
     }
@@ -40,7 +45,6 @@ static Node *left_rotate(Node *r, Node *n)
 {
     Node *right = n->right;
     n->right = right->left;
-
     if (n->right != NULL) {
         n->right->parent = n;
     }
@@ -64,7 +68,6 @@ static Node *right_rotate(Node *r, Node *n)
 {
     Node *left = n->left;
     n->left = left->right;
-
     if (n->left != NULL) {
         n->left->parent = n;
     }
@@ -94,7 +97,7 @@ static Node *create_node(int key)
     return n;
 }
 
-static Node *transplant(Node * r, Node *x, Node *y)
+static Node *transplant(Node *r, Node *x, Node *y)
 {
     if (x->parent == NULL) {
         r = y;
@@ -106,98 +109,6 @@ static Node *transplant(Node * r, Node *x, Node *y)
     y->parent = x->parent;
 
     return r;
-}
-
-static Node *deletion_fixup(Node *r, Node *x)
-{
-    Node *w = NULL;
-    while ((x != r) && (x->color == black)) {
-        if (x == x->parent->left) {
-            w = x->parent->right;
-            if (w->color == red) {
-                w->color = black;
-                x->parent->color = red;
-                left_rotate(r, x->parent);
-                w = x->parent->right;
-            }
-
-            if (w->left->color == black &&
-                w->right->color == black) {
-                w->color = red;
-                x = x->parent;
-            } else if (black == w->right->color) {
-                w->left->color = black;
-                w->color = red;
-                right_rotate(r, w);
-                w = x->parent->right;
-            } else {
-                w->color = x->parent->color;
-                x->parent->color = black;
-                w->right->color = black;
-                left_rotate(r, x->parent);
-                x = r;
-            }
-        } else {
-            w = x->parent->left;
-            if (w->color == red) {
-                w->color = black;
-                x->parent->color = red;
-                right_rotate(r, x->parent);
-                w = x->parent->left;
-            }
-
-            if (w->right->color == black &&
-                w->left->color == black) {
-                w->color = red;
-                x = x->parent;
-            } else if (black == w->left->color) {
-                w->right->color = black;
-                w->color = red;
-                left_rotate(r, w);
-                w = x->parent->left;
-            } else {
-                w->color = x->parent->color;
-                x->parent->color = black;
-                w->left->color = black;
-                right_rotate(r, x->parent);
-                x = r;
-            }
-        }
-    }
-    x->color = black;
-    return x;
-}
-
-static Node *deletion(Node *r, Node *z)
-{
-    Node *x = NULL;
-    Node *y = z;
-    color y_original_color = y->color;
-    if (z->left == NULL) {
-        x = z->right;
-        transplant(r, z, z->right);
-    } else if (z->right == NULL) {
-        x = z->left;
-        transplant(r, z, z->left);
-    } else {
-        y = get_smallest_subtree_node(z->right);
-        y_original_color = y->color;
-        x = y->right;
-        if (y->parent == z) {
-            x->parent = y;
-        } else {
-            transplant(r, y, y->right);
-            y->right = z->right;
-        }
-        transplant(r, z, y);
-        y->left = z->left;
-        y->left->parent = y;
-        y->color = z->color;
-    }
-    if (y_original_color == black) {
-        deletion_fixup(r, x);
-    }
-    return z;
 }
 
 static Node *insertion_fixup(Node *r, Node *n)
@@ -317,10 +228,9 @@ Node *insert(int key)
 
 Node *purge(int key)
 {
-    Node *n = NULL;
     Node *to_delete = find(key);
-    n = deletion(root, to_delete);
-    return n;
+    /* Not implement deletion yet */
+    return root;
 }
 
 void display()
@@ -353,8 +263,14 @@ int main(int argc, char *argv[])
     printf("\nPrinting In Order Traversal (Before Delete): ");
     tree->display();
 
-    printf("\n Printing In Order Traversal (After Delete): ");
+    /* tree->purge(7); */
+    /* tree->purge(2); */
+    /* tree->purge(1); */
+
+    /* printf("\n Printing In Order Traversal (After Delete): "); */
+    /* tree->display(); */
 
     free(tree);
     return 0;
+
 }
