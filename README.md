@@ -1,2 +1,2 @@
-My experiments with my favorites programming languages...
-==========================================================
+Experiments using my favorite programming languages
+===================================================
