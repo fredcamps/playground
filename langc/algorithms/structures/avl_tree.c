@@ -6,7 +6,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-
 typedef struct node {
     int key;
     int height;
@@ -24,30 +23,35 @@ static Node *root;
 
 static Node *search(int key);
 
-static int max(int l, int r) {
+static int max(int l, int r)
+{
     return (l > r) ? l : r;
 }
 
-static int height(Node *n) {
+static int height(Node *n)
+{
     if (n == NULL) {
         return 0;
     }
     return n->height;
 }
 
-static int get_balance_factor(Node *n) {
+static int get_balance_factor(Node *n)
+{
     if (n == NULL) {
         return 0;
     }
     return height(n->left) - height(n->right);
 }
 
-static Node *update_heights(Node *n) {
+static Node *update_heights(Node *n)
+{
     n->height = max(height(n->left), height(n->right))+1;
     return n;
 }
 
-static Node *left_rotate(Node *x) {
+static Node *left_rotate(Node *x)
+{
     Node *y = x->right;
     Node *z = y->left;
 
@@ -80,7 +84,8 @@ static Node *right_rotate(Node *y)
     return x;
 }
 
-static Node *create_node(int key) {
+static Node *create_node(int key)
+{
     Node *n = (Node *) malloc(sizeof(Node));
     n->key = key;
     n->left = NULL;
@@ -89,7 +94,8 @@ static Node *create_node(int key) {
     return n;
 }
 
-static Node *get_smallest_subtree_node(Node *n) {
+static Node *get_smallest_subtree_node(Node *n)
+{
     Node *current = n;
     while(current->left != NULL) {
         current = current->left;
@@ -98,7 +104,8 @@ static Node *get_smallest_subtree_node(Node *n) {
 }
 
 
-static Node *insertion(int key, Node *n) {
+static Node *insertion(int key, Node *n)
+{
     if (n == NULL) {
         return create_node(key);
     }
@@ -147,7 +154,8 @@ static Node *insertion(int key, Node *n) {
 }
 
 
-static Node *purge_item(int key, Node *n) {
+static Node *purge_item(int key, Node *n)
+{
     if (n == NULL) {
         return n;
     }
@@ -222,12 +230,14 @@ static Node *purge_item(int key, Node *n) {
     return n;
 }
 
-Node *insert(int key) {
+Node *insert(int key)
+{
     root = insertion(key, root);
     return root;
 }
 
-Node *search(int key) {
+Node *search(int key)
+{
     Node *n = root;
 
     if (n == NULL) {
@@ -247,13 +257,15 @@ Node *search(int key) {
     return n;
 }
 
-Node *purge(int key) {
+Node *purge(int key)
+{
     root = purge_item(key, root);
     return root;
 }
 
 
-static void pre_order(Node *r) {
+static void pre_order(Node *r)
+{
     if (r != NULL) {
         printf("%d ", r->key);
         pre_order(r->left);
@@ -261,7 +273,8 @@ static void pre_order(Node *r) {
     }
 }
 
-static void in_order(Node *r) {
+static void in_order(Node *r)
+{
     if (r != NULL) {
         in_order(r->left);
         printf("%d ", r->key);
@@ -269,7 +282,8 @@ static void in_order(Node *r) {
     }
 }
 
-static void post_order(Node *r) {
+static void post_order(Node *r)
+{
     if (r != NULL) {
         post_order(r->left);
         post_order(r->right);
@@ -277,7 +291,8 @@ static void post_order(Node *r) {
     }
 }
 
-void display() {
+void display()
+{
     printf(" Pre Order Traversal: ");
     pre_order(root);
     printf(" In Order Traversal: ");
@@ -286,7 +301,8 @@ void display() {
     post_order(root);
 }
 
-AVLTree *make_avl_tree() {
+AVLTree *make_avl_tree()
+{
     AVLTree *t = (AVLTree *) malloc(sizeof(AVLTree));
     t->insert = insert;
     t->purge = purge;
