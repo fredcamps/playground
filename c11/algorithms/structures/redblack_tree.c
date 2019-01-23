@@ -165,12 +165,6 @@ static Node *search(RedBlackTree *t, int key)
     return n;
 }
 
-/* static int has_key(RedBlackTree *t, int key) */
-/* { */
-/*     return (search(t, key) != NULL); */
-/* } */
-
-
 static void deletion_fixup(RedBlackTree *t,
                            Node *n,
                            Node *node_parent,
