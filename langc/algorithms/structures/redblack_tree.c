@@ -175,50 +175,50 @@ static void deletion_fixup(RedBlackTree *t,
         Node *parent = (n == NULL) ? node_parent : n->parent;
 
         if (n == parent->left || _direction == LEFT) {
-			uncle  = parent->right;
-			if (is_red(uncle)) {
-				uncle->color = BLACK;
-				parent->color = RED;
-				left_rotate(tree, parent);
-				uncle = parent->right;
-			}
-			if (!is_red(uncle->left) && !is_red(uncle->right)) {
-				uncle->color = RED;
-				n = (n == NULL) ? node_parent : n->parent;
-			} else if (!is_red(uncle->right)) {
-				uncle->color = RED;
-				uncle->left->color = BLACK;
-				right_rotate(t, uncle);
-				uncle = parent->right;
-			} else {
-				parent->color = BLACK;
-				uncle->color = RED;
-				uncle->right->color = BLACK;
-				left_rotate(t, parent);
-				n = t->root;
+            uncle  = parent->right;
+            if (is_red(uncle)) {
+                uncle->color = BLACK;
+                parent->color = RED;
+                left_rotate(tree, parent);
+                uncle = parent->right;
+            }
+            if (!is_red(uncle->left) && !is_red(uncle->right)) {
+                uncle->color = RED;
+                n = (n == NULL) ? node_parent : n->parent;
+            } else if (!is_red(uncle->right)) {
+                uncle->color = RED;
+                uncle->left->color = BLACK;
+                right_rotate(t, uncle);
+                uncle = parent->right;
+            } else {
+                parent->color = BLACK;
+                uncle->color = RED;
+                uncle->right->color = BLACK;
+                left_rotate(t, parent);
+                n = t->root;
             }
         } else {
             uncle = parent->left;
             if (is_red(uncle)) {
-				uncle->color = BLACK;
-				parent->color = RED;
-				right_rotate(t, parent);
-				uncle = parent->left;
-			}
-			if (!is_red(uncle->right) && !is_red(uncle->left)) {
-				uncle->color = RED;
-				n = (n == NULL) ? node_parent : n->parent;
-			} else if (!is_red(uncle->left)) {
-				uncle->color = RED;
-				uncle->right->color = BLACK;
-				left_rotate(t, uncle);
-				uncle = parent->left;
-			} else {
-				parent->color = BLACK;
-				uncle->color = RED;
-				uncle->left->color = BLACK;
-				right_rotate(t, parent);
-				n = t->root;
+                uncle->color = BLACK;
+                parent->color = RED;
+                right_rotate(t, parent);
+                uncle = parent->left;
+            }
+            if (!is_red(uncle->right) && !is_red(uncle->left)) {
+                uncle->color = RED;
+                n = (n == NULL) ? node_parent : n->parent;
+            } else if (!is_red(uncle->left)) {
+                uncle->color = RED;
+                uncle->right->color = BLACK;
+                left_rotate(t, uncle);
+                uncle = parent->left;
+            } else {
+                parent->color = BLACK;
+                uncle->color = RED;
+                uncle->left->color = BLACK;
+                right_rotate(t, parent);
+                n = t->root;
             }
         }
     }
