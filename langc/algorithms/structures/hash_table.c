@@ -47,7 +47,6 @@ Node *hash_table_get(int key)
             return hash_table->nodes[hash_index];
         }
     }
-
     return NULL;
 }
 
@@ -60,7 +59,7 @@ void hash_table_delete(int key)
     dummy_item->value = -1;
     dummy_item->key = -1;
 
-    //move in array until an empty
+    // move in array until an empty
     while (hash_table->nodes[hash_index] !=NULL) {
         if(hash_table->nodes[hash_index]->key == key) {
             // Node* temp = hash_table->nodes[hash_index];
@@ -68,7 +67,6 @@ void hash_table_delete(int key)
             hash_table->nodes[hash_index] = dummy_item;
             return;
         }
-
         //go to next cell
         ++hash_index;
 
@@ -92,13 +90,13 @@ HashTable *make_hash_table ()
     return hash_table;
 }
 
-
 int main(int argc, char *argv[])
 {
     HashTable *h = make_hash_table();
     h->insert(1, 20);
     h->insert(2, 30);
     h->insert(4, 40);
+    h->delete(4);
     Node *temp = h->get(2);
     assert(temp->key == 2);
     printf("%d", temp->key);
