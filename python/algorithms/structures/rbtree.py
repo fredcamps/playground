@@ -13,13 +13,12 @@ class Direction(Enum):
 
 class Node:
 
-    def __init__(self, key, value, color=Color.RED):
+    def __init__(self, key, color=Color.RED):
         self.parent = None
         self.left = None
         self.right = None
         self.color = color
         self.key = key
-        self.value = value
 
     @property
     def is_red(self):
@@ -30,7 +29,7 @@ class RedBlackTree:
 
     def __init__(self, create_node=Node):
         self.root = None
-        self._nil = create_node(key=None, value=None, color=Color.BLACK)
+        self._nil = create_node(key=None, color=Color.BLACK)
         self._create_node = create_node
 
     def _minimum(self, node):
@@ -232,8 +231,8 @@ class RedBlackTree:
         self._insert_fix_up(node)
         return node
 
-    def insert(self, key, value):
-        node = self._create_node(key=key, value=value)
+    def insert(self, key):
+        node = self._create_node(key=key)
         return self._insert_helper(node)
 
     def delete(self, key):
@@ -289,18 +288,16 @@ class RedBlackTree:
 def test():
     tree = RedBlackTree()
 
-    tree.insert(key=7, value='seven')
-    tree.insert(key=6, value='six')
-    tree.insert(key=5, value='five')
-    tree.insert(key=4, value='four')
-    tree.insert(key=3, value='three')
-    tree.insert(key=2, value='two')
-    tree.insert(key=1, value='one')
+    tree.insert(key=7)
+    tree.insert(key=6)
+    tree.insert(key=5)
+    tree.insert(key=4)
+    tree.insert(key=3)
+    tree.insert(key=2)
+    tree.insert(key=1)
 
     print("Showing Red Black Traversal Before Deletion(s): ")
     tree.traversal()
-
-    import pdb; pdb.set_trace()
 
     tree.delete(key=7)
     tree.delete(key=5)
