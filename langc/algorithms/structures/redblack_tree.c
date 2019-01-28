@@ -356,7 +356,6 @@ static Node *insertion(RedBlackTree *t, Node *n)
     return n;
 }
 
-
 static void inorder_helper(Node *r)
 {
     if (r == NULL) {
@@ -365,6 +364,26 @@ static void inorder_helper(Node *r)
     inorder_helper(r->left);
     printf("%d ", r->key);
     inorder_helper(r->right);
+}
+
+static void pre_order_helper(Node *r)
+{
+    if (r == NULL) {
+        return;
+    }
+    printf("%d ", r->key);
+    pre_order_helper(r->left);
+    pre_order_helper(r->right);
+}
+
+static void post_order_helper(Node *r)
+{
+    if (r == NULL) {
+        return;
+    }
+    post_order_helper(r->left);
+    post_order_helper(r->right);
+    printf("%d ", r->key);
 }
 
 Node *find(int key)
@@ -387,7 +406,12 @@ int purge(int key)
 
 void display()
 {
+    printf("\n In Order Traversal: ");
     inorder_helper(tree->root);
+    printf("\n Pre Order Traversal: ");
+    pre_order_helper(tree->root);
+    printf("\n Post Order Traversal: ");
+    post_order_helper(tree->root);
 }
 
 void destroy()
@@ -417,14 +441,15 @@ int main(int argc, char *argv[])
     tree->insert(3);
     tree->insert(2);
     tree->insert(1);
-    printf("\nPrinting In Order Traversal (Before Delete): ");
+    printf("\nPrinting Traversal (Before Delete): ");
     tree->display();
 
     tree->purge(7);
+    tree->purge(5);
     tree->purge(2);
     tree->purge(1);
 
-    printf("\n Printing In Order Traversal (After Delete): ");
+    printf("\n Printing Traversal(After Delete): ");
     tree->display();
     tree->destroy();
     return 0;
