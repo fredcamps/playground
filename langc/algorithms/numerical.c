@@ -50,7 +50,7 @@ int is_prime(int n)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
     int a, b, c, d;
     printf("Enter value of a:");
@@ -63,4 +63,5 @@ int main()
     printf("\nGreater Common Divisor: %d\n", d);
     printf("a number is prime? %d\n", is_prime(a));
     printf("b number is prime? %d\n", is_prime(b));
+    return 0;
 }
