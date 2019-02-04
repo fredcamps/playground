@@ -1,17 +1,15 @@
-class Node(object):
-    def __init__(self, value):
-        self.value = value
-        self.edges = []
-
-
-class Edge(object):
-    def __init__(self, value, node_from, node_to):
-        self.value = value
-        self.node_from = node_from
-        self.node_to = node_to
-
-
 class Graph(object):
+    class Node(object):
+        def __init__(self, value):
+            self.value = value
+            self.edges = []
+
+    class Edge(object):
+        def __init__(self, value, node_from, node_to):
+            self.value = value
+            self.node_from = node_from
+            self.node_to = node_to
+
     def __init__(self, nodes=None, edges=None):
         self.nodes = nodes or []
         self.edges = edges or []
@@ -26,7 +24,7 @@ class Graph(object):
 
     def insert_node(self, new_node_val):
         "Insert a new node with value new_node_val"
-        new_node = Node(new_node_val)
+        new_node = self.Node(new_node_val)
         self.nodes.append(new_node)
         self._node_map[new_node_val] = new_node
         return new_node
@@ -43,7 +41,7 @@ class Graph(object):
             nodes[node_val] = nodes[node_val] or self.insert_node(node_val)
         node_from = nodes[node_from_val]
         node_to = nodes[node_to_val]
-        new_edge = Edge(new_edge_val, node_from, node_to)
+        new_edge = self.Edge(new_edge_val, node_from, node_to)
         node_from.edges.append(new_edge)
         node_to.edges.append(new_edge)
         self.edges.append(new_edge)
@@ -82,7 +80,6 @@ class Graph(object):
         Node names should come from the names set
         with set_node_names."""
         adjacency_list = self.get_adjacency_list()
-
         def convert_to_names(pair, graph=self):
             node_number, value = pair
             return (graph.node_names[node_number], value)
@@ -90,7 +87,7 @@ class Graph(object):
         def map_conversion(adjacency_list_for_node):
             if adjacency_list_for_node is None:
                 return None
-            return map(convert_to_names, adjacency_list_for_node)
+            return list(map(convert_to_names, adjacency_list_for_node))
         return [map_conversion(adjacency_list_for_node)
                 for adjacency_list_for_node in adjacency_list]
 
@@ -228,23 +225,23 @@ graph.insert_edge(9471, 5, 2)   # Sao Paolo <-> London
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
-print "Edge List"
+print("Edge List")
 pp.pprint(graph.get_edge_list_names())
 
-print "\nAdjacency List"
+print("Adjacency List")
 pp.pprint(graph.get_adjacency_list_names())
 
-print "\nAdjacency Matrix"
+print("Adjacency Matrix")
 pp.pprint(graph.get_adjacency_matrix())
 
-print "\nDepth First Search"
+print("Depth First Search")
 pp.pprint(graph.dfs_names(2))
 
 # Should print:
 # Depth First Search
 # ['London', 'Shanghai', 'Mountain View', 'San Francisco', 'Berlin', 'Sao Paolo']
 
-print "\nBreadth First Search"
+print("\nBreadth First Search")
 pp.pprint(graph.bfs_names(2))
 # test error reporting
 # pp.pprint(['Sao Paolo', 'Mountain View', 'San Francisco', 'London', 'Shanghai', 'Berlin'])

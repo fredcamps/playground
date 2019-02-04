@@ -11,21 +11,18 @@ class Direction(Enum):
     RIGHT = 'RIGHT'
 
 
-class Node:
-
-    def __init__(self, key, color=Color.RED):
-        self.parent = None
-        self.left = None
-        self.right = None
-        self.color = color
-        self.key = key
-
-    @property
-    def is_red(self):
-        return self.color == Color.RED
-
-
 class RedBlackTree:
+    class Node:
+        def __init__(self, key, color=Color.RED):
+            self.parent = None
+            self.left = None
+            self.right = None
+            self.color = color
+            self.key = key
+
+        @property
+        def is_red(self):
+            return self.color == Color.RED
 
     def __init__(self, create_node=Node):
         self.root = None
