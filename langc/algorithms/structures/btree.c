@@ -7,7 +7,6 @@
 typedef struct node_t {
     int values[MAX + 1];
     int count;
-    int is_leaf;
     struct node_t *links[MAX + 1];
 } Node;
 
@@ -30,7 +29,6 @@ static Node *create_node(int value, Node *child)
     new_node->count = 1;
     new_node->links[0] = tree->root;
     new_node->links[1] = child;
-    // new_node->is_leaf = 1; // fix
     return new_node;
 }
 
@@ -197,7 +195,6 @@ int main()
     tree->insert(3);
     tree->insert(2);
     tree->insert(1);
-
 
     printf("\nB-Tree Traversal before deletion(s): \n");
     tree->traversal();
