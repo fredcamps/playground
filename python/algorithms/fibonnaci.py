@@ -1,3 +1,5 @@
+# Fast doubling fibonacci algorithm
+
 # Returns the tuple (F(n), F(n+1)).
 def fib(n):
     if n == 0:

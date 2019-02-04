@@ -1,3 +1,5 @@
+# knuth morris pratt pattern matching algorithm
+
 def _partial(pattern):
     """ Calculate partial match table: String -> [Int]"""
     ret = [0]
