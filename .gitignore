@@ -1,8 +1,9 @@
+*~
+*.o
+*.log
+.ccls-cache
 GPATH
 GPATHS
 GRTAGS
 GTAGS
 GSYMS
-*~
-*.o
-*.log
