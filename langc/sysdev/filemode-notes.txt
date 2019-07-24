@@ -1,0 +1,13 @@
+BUG FOUND Different results on GCC, CLANG
+
+clang
+clang version 8.0.0-3 (tags/RELEASE_800/final)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+
+Output: 1111
+
+gcc
+version 8.3.0-6
+Output: 1111Hello my ball!
