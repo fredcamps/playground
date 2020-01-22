@@ -1,11 +1,11 @@
 variable "awsConfs" {
   type = object({
-    region = string
+    region  = string
     profile = string
   })
 
   default = {
-    region = "sa-east-1"
+    region  = "sa-east-1"
     profile = "fred-invillia"
   }
 }
