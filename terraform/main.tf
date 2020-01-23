@@ -17,6 +17,11 @@ resource "aws_s3_bucket_object" "playground-bucket-object" {
   server_side_encryption = "AES256"
 }
 
-output "aws_s3_info" {
-  value = "${aws_s3_bucket.playground-bucket.bucket} saving ${aws_s3_bucket_object.playground-bucket-object.key} file"
+module "module-hello_world" {
+  source   = "./module-hello_world"
+  argument = "hello world module, you running here"
+}
+
+output "module-output" {
+  value = module.module-hello_world.hello_world_output
 }

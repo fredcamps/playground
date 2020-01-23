@@ -1,0 +1,3 @@
+variable "argument" {
+  type = string
+}
